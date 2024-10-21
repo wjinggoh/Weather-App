@@ -1,6 +1,7 @@
-# tutorialflutter
+# Weather App
 
 First Flutter project. weather app.
+resource: https://www.youtube.com/watch?v=yLtpMqvMgdY&t=162s&ab_channel=MitchKoko
 
 what have learnt: create flutter app, basics of how it was created, link ADB from Android studio to VS Code
 
