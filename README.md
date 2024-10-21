@@ -1,6 +1,8 @@
 # tutorialflutter
 
-A new Flutter project.
+First Flutter project. weather app.
+
+what have learnt: create flutter app, basics of how it was created, link ADB from Android studio to VS Code
 
 ## Getting Started
 
