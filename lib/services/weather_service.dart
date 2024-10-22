@@ -11,38 +11,41 @@ class WeatherService {
   WeatherService(this.apiKey);
 
   Future<Weather> getWeather(String cityName) async {
-    final response = await http
-        .get(Uri.parse('$BASE_URL?q=$cityName&appid=$apiKey&units=metric'));
+    try {
+      final response = await http.get(Uri.parse(
+          '$BASE_URL?q=$cityName&appid=$apiKey&units=metric'));
 
-    if (response.statusCode == 200) {
-      return Weather.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to load weather data');
+      if (response.statusCode == 200) {
+        return Weather.fromJson(jsonDecode(response.body));
+      } else {
+        throw Exception('Failed to load weather data: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching weather: $e');
     }
   }
 
   Future<String> getCurrentCity() async {
-    //get permission from user
+    // Check location permissions
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
     }
-// Permissions are denied forever
     if (permission == LocationPermission.deniedForever) {
       throw Exception('Location permissions are permanently denied.');
     }
 
-    //fetch the current location
+    // Fetch current position
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
 
-    //convert the location into a list of placemark objects
-    List<Placemark> placemarks =
-        await placemarkFromCoordinates(position.latitude, position.longitude);
+    // Convert coordinates to placemarks
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude, position.longitude);
 
-    //extract the city name from the first placemark
+    // Extract city name
     String? city = placemarks.isNotEmpty ? placemarks[0].locality : null;
 
-    return city ?? "Unknown Location";
+    return city ?? "Unknown location";
   }
 }

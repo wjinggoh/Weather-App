@@ -3,72 +3,104 @@ import 'package:lottie/lottie.dart';
 import 'package:tutorialflutter/models/weather_model.dart';
 import 'package:tutorialflutter/services/weather_service.dart';
 
-
-class WeatherPage extends StatefulWidget{
+class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
 
   @override
-  State<WeatherPage> createState() =>_WeatherPageState();
-
+  State<WeatherPage> createState() => _WeatherPageState();
 }
 
-class _WeatherPageState extends State<WeatherPage>{
-
-  //api key
-  final _weatherService =WeatherService('YOUR API KEY');
+class _WeatherPageState extends State<WeatherPage> {
+  // API key
+  final _weatherService = WeatherService('5b3447d96f726b4752bed5e6f3cf04f4');
   Weather? _weather;
 
-  //fetch weather
-  _fetchWeather() async{
-    //get the current city
-    String cityName= await _weatherService.getCurrentCity();
+  // Fetch weather
+  _fetchWeather() async {
+    // Get the current city
+    String cityName = await _weatherService.getCurrentCity();
 
-    //get weather for city
-    try{
-      final weather= await _weatherService.getWeather(cityName);
-      setState((){
-        _weather =weather;
+    // Get weather for city
+    try {
+      final weather = await _weatherService.getWeather(cityName);
+      setState(() {
+        _weather = weather;
       });
-    }
-
-    //any errors
-    catch(e){
+    } catch (e) {
       print(e);
     }
-
   }
 
-  //weather animations
-
-  //init state
+  // Initialize state
   @override
-  void initState(){
+  void initState() {
     super.initState();
 
-    //fetch weather on startup
+    // Fetch weather on startup
     _fetchWeather();
   }
 
+  // Method to get Lottie animation based on weather condition
+  Widget _getWeatherAnimation() {
+    switch (_weather?.mainCondition) {
+      case 'Clouds':
+        return Lottie.asset('assets/cloudy.json');
+      case 'Rain':
+        return Lottie.asset('assets/rain.json');
+      case 'Clear':
+        return Lottie.asset('assets/sunny.json');
+      case 'Thunderstorm':
+        return Lottie.asset('assets/thunderstorm.json');
+      default:
+        return Lottie.asset(
+            'assets/sunnyrain.json'); // Default animation for unknown weather conditions
+    }
+  }
+
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
-      body:Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          //city name
-          Text(_weather?.cityName ?? "loading city..."),
+          children: [
+            // City name
+            Text(
+              _weather?.cityName ?? "Loading city...",
+              style: const TextStyle(
+                fontFamily: 'PlaywriteGBS',
+                fontSize: 24,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
 
-          //animation
-          Lottie.asset('assets/sunnyrain.json'),
-          //temperature
-          Text('${_weather?.temperature.round()} C'),
+            // Animation based on weather condition
+            _weather != null
+                ? _getWeatherAnimation() // Show the appropriate animation
+                : Lottie.asset('assets/loading.json'), // Loading animation
 
-          //weather condition
-          Text(_weather?.mainCondition ?? "")
-        ],
-      )
-    )
+            // Temperature
+            Text(
+              '${_weather?.temperature.round()} C',
+              style: const TextStyle(
+                fontFamily: 'PlaywriteGBS',
+                fontSize: 24,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+
+            // Weather condition
+            Text(
+              _weather?.mainCondition ?? "",
+              style: const TextStyle(
+                fontFamily: 'PlaywriteGBS',
+                fontSize: 24,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
