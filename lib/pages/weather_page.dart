@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:tutorialflutter/models/weather_model.dart';
 import 'package:tutorialflutter/services/weather_service.dart';
+
 
 class WeatherPage extends StatefulWidget{
   const WeatherPage({super.key});
@@ -57,8 +59,13 @@ class _WeatherPageState extends State<WeatherPage>{
           //city name
           Text(_weather?.cityName ?? "loading city..."),
 
+          //animation
+          Lottie.asset('assets/sunnyrain.json'),
           //temperature
-          Text('${_weather?.temperature.round()} C')
+          Text('${_weather?.temperature.round()} C'),
+
+          //weather condition
+          Text(_weather?.mainCondition ?? "")
         ],
       )
     )
